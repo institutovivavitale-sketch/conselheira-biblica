@@ -8,39 +8,69 @@ export default function Home() {
   const [respostas, setRespostas] = useState([]);
   const router = useRouter();
 
-  const enviarMensagem = () => {
-    if (!mensagem) return;
+  const perguntasRapidas = [
+    "Ele está distante de mim",
+    "Meu casamento esfriou",
+    "Ele me traiu",
+    "Não sei como agir com ele"
+  ];
+
+  const enviarMensagem = (texto) => {
+    const msg = texto || mensagem;
+    if (!msg) return;
 
     const novaPergunta = {
       tipo: "pergunta",
-      texto: mensagem,
+      texto: msg,
     };
 
-    const respostaFake = {
+    let respostaTexto =
+      "Entenda isso primeiro: você não precisa agir no impulso.\n\nO que a Bíblia mostra: existe sabedoria em agir com calma.\n\nO que fazer agora:\n1. Pare de reagir emocionalmente\n2. Observe o comportamento dele\n3. Ajuste sua postura\n\nCuidado: insistir só afasta.\n\nFaça isso hoje: fique em silêncio e observe.";
+
+    // alerta inteligente
+    if (respostas.length >= 4) {
+      respostaTexto =
+        "Eu posso continuar te respondendo, mas nesse momento isso não vai mudar sua situação.\n\nO que vai gerar resultado é aplicar o que já foi direcionado.\n\nEscolha uma das orientações anteriores e coloque em prática hoje.";
+    }
+
+    const resposta = {
       tipo: "resposta",
-      texto:
-        "Entenda isso primeiro: você não precisa agir no impulso.\n\nO que a Bíblia mostra: existe sabedoria em agir com calma e direção.\n\nO que fazer agora:\n1. Pare de reagir no calor da emoção\n2. Observe o comportamento dele\n3. Ajuste sua postura\n\nCuidado: insistir ou pressionar só afasta mais.\n\nFaça isso hoje: fique em silêncio estratégico e observe.",
+      texto: respostaTexto,
     };
 
-    setRespostas([...respostas, novaPergunta, respostaFake]);
+    setRespostas([...respostas, novaPergunta, resposta]);
     setMensagem("");
   };
 
   return (
-    <main className="min-h-screen bg-[#0f0f0f] text-white flex flex-col items-center px-4 py-10">
+    <main className="min-h-screen bg-gradient-to-b from-[#0f0f0f] to-[#1a1a1a] text-white flex flex-col items-center px-4 py-10">
 
-      <h1 className="text-2xl font-semibold mb-2 text-center">
-        Sua Conselheira Bíblica
+      <h1 className="text-3xl font-semibold mb-2 text-center">
+        Oráculo Bíblico
       </h1>
 
       <p className="text-gray-400 text-center mb-6 max-w-md">
-        Receba direção clara, prática e baseada na Palavra.
+        Direção clara para o seu relacionamento, baseada na Palavra.
       </p>
 
-      <div className="w-full max-w-md bg-[#1a1a1a] rounded-2xl p-4 h-[420px] overflow-y-auto mb-4 shadow-lg">
+      {/* Sugestões */}
+      <div className="flex flex-wrap gap-2 mb-4 max-w-md justify-center">
+        {perguntasRapidas.map((p, i) => (
+          <button
+            key={i}
+            onClick={() => enviarMensagem(p)}
+            className="bg-[#2a2a2a] text-sm px-3 py-2 rounded-full hover:bg-[#3a3a3a]"
+          >
+            {p}
+          </button>
+        ))}
+      </div>
+
+      {/* Chat */}
+      <div className="w-full max-w-md bg-[#1a1a1a] rounded-2xl p-4 h-[420px] overflow-y-auto mb-4 shadow-xl">
         {respostas.length === 0 && (
           <p className="text-gray-500 text-sm text-center">
-            Digite sua dúvida para começar
+            Digite sua dúvida ou escolha uma opção acima
           </p>
         )}
 
@@ -64,6 +94,7 @@ export default function Home() {
         ))}
       </div>
 
+      {/* Input */}
       <div className="w-full max-w-md flex gap-2">
         <input
           value={mensagem}
@@ -73,20 +104,25 @@ export default function Home() {
         />
 
         <button
-          onClick={enviarMensagem}
+          onClick={() => enviarMensagem()}
           className="bg-white text-black px-4 rounded-xl font-medium"
         >
           Enviar
         </button>
       </div>
 
+      {/* Botão premium */}
       <button
-  onClick={() => router.push("/analise")}
-  className="mt-8 bg-white text-black px-6 py-3 rounded-xl font-semibold shadow-lg hover:scale-105 transition text-center leading-tight"
->
-  <span className="block">Quero uma análise individual</span>
-  <span className="block">sobre o meu relacionamento</span>
-</button>
+        onClick={() => router.push("/analise")}
+        className="mt-8 bg-white text-black px-6 py-4 rounded-xl font-semibold shadow-xl hover:scale-105 transition text-center leading-tight"
+      >
+        <span className="block text-base">
+          Quero uma análise individual
+        </span>
+        <span className="block text-sm opacity-80">
+          sobre o meu relacionamento
+        </span>
+      </button>
 
     </main>
   );
