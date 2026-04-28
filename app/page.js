@@ -119,9 +119,14 @@ export default function Home() {
           Seu acesso ainda não foi liberado.
         </p>
 
-        <a href="#" className="bg-white text-black px-6 py-3 rounded">
-          Assinar agora
-        </a>
+        <a
+  href="https://checkout.payt.com.br/02936c4fc57ed16c8e45e392086f5b98"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="bg-white text-black px-6 py-3 rounded"
+>
+  Assinar agora
+</a>
       </div>
     );
   }
