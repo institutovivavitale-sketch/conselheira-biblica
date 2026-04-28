@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 
 export default function Home() {
-
   const [user, setUser] = useState(null);
   const [carregando, setCarregando] = useState(true);
   const [email, setEmail] = useState("");
@@ -16,6 +15,7 @@ export default function Home() {
 
   const emailsPermitidos = [
     "seuemail@gmail.com"
+    "investvilkn@gmail.com"
   ];
 
   const categorias = {
@@ -60,7 +60,6 @@ export default function Home() {
     supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
     });
-
   }, []);
 
   const acessoLiberado = user && emailsPermitidos.includes(user.email);
@@ -96,7 +95,6 @@ export default function Home() {
     }
   };
 
-  // ⏳ loading
   if (carregando) {
     return (
       <main className="min-h-screen flex items-center justify-center bg-black text-white">
@@ -105,44 +103,45 @@ export default function Home() {
     );
   }
 
-  // 🔐 LOGIN BONITO
   if (!user) {
     return (
       <main className="min-h-screen bg-black text-white flex items-center justify-center px-6">
-        <div className="w-full max-w-md bg-[#171717] rounded-3xl p-8 text-center border border-white/10">
-
+        <div className="w-full max-w-md bg-[#171717] rounded-3xl p-8 text-center border border-white/10 shadow-2xl">
           <h1 className="text-3xl mb-4">Oráculo Bíblico</h1>
 
-          <p className="text-gray-400 mb-6">
+          <p className="text-gray-400 mb-8">
             Receba direção clara para o seu relacionamento
           </p>
 
-          <input
-  placeholder="Seu email"
-  value={email}
-  onChange={(e) => setEmail(e.target.value)}
-  className="w-full p-4 rounded-xl bg-[#0f0f0f] text-white border border-white/20 mb-4 outline-none focus:border-[#d6b56d] transition"
-/>
+          <div className="text-left mb-4">
+            <label className="text-xs text-gray-400 mb-2 block">
+              Seu email
+            </label>
+
+            <input
+              type="email"
+              placeholder="exemplo@email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full p-4 rounded-xl bg-[#0f0f0f] text-white border border-white/20 outline-none focus:border-[#d6b56d] transition"
+            />
+          </div>
 
           <button
             onClick={login}
-            className="w-full bg-white text-black py-4 rounded-xl font-semibold"
+            className="w-full bg-white text-black py-4 rounded-xl font-semibold hover:scale-[1.02] transition"
           >
             Receber acesso
           </button>
-
         </div>
       </main>
     );
   }
 
-  // 💰 BLOQUEIO BONITO
   if (!acessoLiberado) {
     return (
       <main className="min-h-screen bg-black text-white flex items-center justify-center px-6 text-center">
-
         <div className="max-w-md">
-
           <h1 className="text-3xl mb-4">Acesso não liberado</h1>
 
           <p className="text-gray-400 mb-6">
@@ -152,22 +151,19 @@ export default function Home() {
           <a
             href="https://checkout.payt.com.br/02936c4fc57ed16c8e45e392086f5b98"
             target="_blank"
+            rel="noopener noreferrer"
             className="bg-white text-black px-6 py-4 rounded-xl font-semibold"
           >
             Assinar agora
           </a>
-
         </div>
-
       </main>
     );
   }
 
-  // 🧠 ESCOLHA DE DOR
   if (etapa === "categoria") {
     return (
       <main className="min-h-screen bg-black text-white flex flex-col items-center justify-center gap-4 px-6">
-
         <h1 className="text-2xl mb-6">Qual é sua maior dor hoje?</h1>
 
         {Object.keys(categorias).map((key) => (
@@ -182,22 +178,19 @@ export default function Home() {
             {categorias[key].titulo}
           </button>
         ))}
-
       </main>
     );
   }
 
-  // 📋 PERGUNTAS
   if (etapa === "perguntas") {
     return (
       <main className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-6 text-center">
-
         <h1 className="mb-6 text-xl">
           {categorias[categoriaSelecionada].perguntas[perguntaAtual]}
         </h1>
 
         <input
-          className="p-4 text-black w-full max-w-sm"
+          className="p-4 text-black w-full max-w-sm rounded-xl"
           placeholder="Digite sua resposta"
           onKeyDown={(e) => {
             if (e.key === "Enter") {
@@ -206,12 +199,10 @@ export default function Home() {
             }
           }}
         />
-
       </main>
     );
   }
 
-  // 🎯 FINAL
   return (
     <main className="min-h-screen bg-black text-white flex items-center justify-center text-center px-6">
       <div>
