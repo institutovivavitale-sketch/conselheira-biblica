@@ -1,184 +1,205 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { supabase } from "../lib/supabase";
 
 export default function Home() {
-  const router = useRouter();
 
-  const [email, setEmail] = useState("");
   const [user, setUser] = useState(null);
   const [carregando, setCarregando] = useState(true);
-  const [mensagem, setMensagem] = useState("");
-  const [respostas, setRespostas] = useState([]);
 
-  // 🔐 LISTA DE EMAILS LIBERADOS
+  const [etapa, setEtapa] = useState("categoria");
+  const [categoriaSelecionada, setCategoriaSelecionada] = useState(null);
+  const [respostas, setRespostas] = useState([]);
+  const [perguntaAtual, setPerguntaAtual] = useState(0);
+
+  const [mensagem, setMensagem] = useState("");
+  const [chat, setChat] = useState([]);
+
   const emailsPermitidos = [
     "seuemail@gmail.com"
   ];
 
-  const acessoLiberado = user && emailsPermitidos.includes(user.email);
+  const categorias = {
+    traicao: {
+      titulo: "Traição",
+      perguntas: [
+        "Quando você descobriu a traição?",
+        "Ele assumiu ou você descobriu?",
+        "Ainda existe contato entre eles?",
+        "Vocês continuam juntos?",
+        "Isso já aconteceu antes?"
+      ]
+    },
+    brigas: {
+      titulo: "Brigas",
+      perguntas: [
+        "As brigas são frequentes?",
+        "Quem costuma iniciar?",
+        "Vocês resolvem ou acumulam?",
+        "Há ofensas ou desrespeito?",
+        "Ficam dias sem se falar?"
+      ]
+    },
+    distanciamento: {
+      titulo: "Distanciamento",
+      perguntas: [
+        "Ele está frio há quanto tempo?",
+        "Vocês ainda conversam normalmente?",
+        "Há carinho físico?",
+        "Vocês dormem juntos?",
+        "Você sente rejeição?"
+      ]
+    }
+  };
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       setUser(data.user);
       setCarregando(false);
     });
-
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
-
-    return () => {
-      listener.subscription.unsubscribe();
-    };
   }, []);
 
-  const fazerLogin = async () => {
-    if (!email) return alert("Digite seu email");
+  const acessoLiberado = user && emailsPermitidos.includes(user.email);
 
-    await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: "https://conselheira-biblica.vercel.app",
-      },
-    });
+  const responderPergunta = async (resposta) => {
+    const novasRespostas = [...respostas, resposta];
+    setRespostas(novasRespostas);
 
-    alert("Verifique seu email para acessar");
-  };
-
-  const sair = async () => {
-    await supabase.auth.signOut();
-    setUser(null);
-  };
-
-  const enviarMensagem = (texto) => {
-    const msg = texto || mensagem;
-    if (!msg) return;
-
-    const novaPergunta = { tipo: "pergunta", texto: msg };
-
-    let respostaTexto =
-      "Você não precisa agir no impulso.\n\nO que a Bíblia mostra: a mulher sábia edifica a sua casa.\n\nO que fazer agora:\n1. Observe mais\n2. Fale menos\n3. Ajuste sua postura\n\nCuidado: insistir pode afastar.\n\nAja com sabedoria hoje.";
-
-    if (respostas.length >= 6) {
-      respostaTexto =
-        "Você já recebeu direção suficiente.\n\nAgora o que vai mudar sua realidade é a sua ação.\n\nAplique o que foi orientado.";
+    if (perguntaAtual + 1 < categorias[categoriaSelecionada].perguntas.length) {
+      setPerguntaAtual(perguntaAtual + 1);
+    } else {
+      await salvarDiagnostico(novasRespostas);
+      setEtapa("chat");
     }
+  };
 
-    const resposta = { tipo: "resposta", texto: respostaTexto };
+  const salvarDiagnostico = async (respostasFinal) => {
+    await supabase.from("diagnosticos").insert([
+      {
+        user_id: user.id,
+        email: user.email,
+        categoria: categoriaSelecionada,
+        respostas: respostasFinal
+      }
+    ]);
+  };
 
-    setRespostas([...respostas, novaPergunta, resposta]);
+  const enviarMensagem = () => {
+    if (!mensagem) return;
+
+    const nova = { tipo: "pergunta", texto: mensagem };
+
+    const resposta = {
+      tipo: "resposta",
+      texto:
+        "Baseado no que você me contou, existe um padrão emocional acontecendo.\n\nVocê precisa parar de agir no impulso e assumir uma postura estratégica.\n\nA mulher sábia edifica a sua casa."
+    };
+
+    setChat([...chat, nova, resposta]);
     setMensagem("");
   };
 
-  // ⏳ loading
-  if (carregando) {
-    return (
-      <main className="min-h-screen flex items-center justify-center bg-black text-white">
-        Carregando...
-      </main>
-    );
-  }
+  if (carregando) return <div className="text-white">Carregando...</div>;
 
-  // ❌ não logada
   if (!user) {
     return (
-      <main className="min-h-screen flex flex-col items-center justify-center bg-black text-white px-6">
-        <h1 className="text-2xl mb-4">Oráculo Bíblico</h1>
-
-        <input
-          placeholder="Seu email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="p-3 rounded text-black mb-4 w-full max-w-sm"
-        />
-
-        <button
-          onClick={fazerLogin}
-          className="bg-white text-black px-6 py-3 rounded"
-        >
-          Entrar
-        </button>
-      </main>
+      <div className="min-h-screen flex items-center justify-center bg-black text-white">
+        <p>Faça login primeiro</p>
+      </div>
     );
   }
 
-  // ⚠️ BLOQUEADO
   if (!acessoLiberado) {
     return (
-      <main className="min-h-screen flex flex-col items-center justify-center bg-black text-white px-6 text-center">
-
+      <div className="min-h-screen flex flex-col items-center justify-center bg-black text-white text-center px-6">
         <h1 className="text-2xl mb-4">Oráculo Bíblico</h1>
 
-        <p className="text-gray-400 mb-6 max-w-sm">
+        <p className="text-gray-400 mb-6">
           Seu acesso ainda não foi liberado.
-          <br /><br />
-          Para acessar o Oráculo Bíblico, adquira sua assinatura.
         </p>
 
-        <a
-          href="#"
-          className="bg-white text-black px-6 py-3 rounded-xl font-semibold"
-        >
+        <a href="#" className="bg-white text-black px-6 py-3 rounded">
           Assinar agora
         </a>
-
-        <button
-          onClick={sair}
-          className="mt-6 text-sm text-gray-500 underline"
-        >
-          Sair
-        </button>
-
-      </main>
+      </div>
     );
   }
 
-  // ✅ LIBERADO
-  return (
-    <main className="min-h-screen bg-black text-white flex flex-col items-center px-4 py-8">
+  if (etapa === "categoria") {
+    return (
+      <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center gap-4 px-6">
 
-      <h1 className="text-3xl mb-2">Oráculo Bíblico</h1>
+        <h1 className="text-2xl mb-4">Qual é sua maior dor hoje?</h1>
 
-      <p className="text-gray-400 mb-6 text-center max-w-md">
-        Direção clara para o seu relacionamento.
-      </p>
-
-      <div className="w-full max-w-md bg-[#1a1a1a] p-4 rounded-xl h-[400px] overflow-y-auto mb-4">
-        {respostas.map((item, i) => (
-          <div key={i} className="mb-3">
-            <p>{item.texto}</p>
-          </div>
+        {Object.keys(categorias).map((key) => (
+          <button
+            key={key}
+            onClick={() => {
+              setCategoriaSelecionada(key);
+              setEtapa("perguntas");
+            }}
+            className="bg-[#1f1f1f] px-6 py-3 rounded w-full max-w-sm"
+          >
+            {categorias[key].titulo}
+          </button>
         ))}
-      </div>
 
-      <div className="w-full max-w-md flex gap-2">
+      </div>
+    );
+  }
+
+  if (etapa === "perguntas") {
+    return (
+      <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-6 text-center">
+
+        <h1 className="mb-6 text-xl">
+          {categorias[categoriaSelecionada].perguntas[perguntaAtual]}
+        </h1>
+
         <input
-          value={mensagem}
-          onChange={(e) => setMensagem(e.target.value)}
-          placeholder="Digite sua dúvida..."
-          className="flex-1 p-3 rounded bg-[#1c1c1c]"
+          className="p-3 text-black mb-4 w-full max-w-sm"
+          placeholder="Digite sua resposta"
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              responderPergunta(e.target.value);
+              e.target.value = "";
+            }
+          }}
         />
 
-        <button
-          onClick={() => enviarMensagem()}
-          className="bg-white text-black px-4 rounded"
-        >
-          Enviar
-        </button>
       </div>
+    );
+  }
 
-      <button
-        onClick={() => router.push("/analise")}
-        className="mt-8 bg-white text-black px-6 py-4 rounded-xl text-center"
-      >
-        Quero uma análise individual
-        <br />
-        sobre o meu relacionamento
-      </button>
+  if (etapa === "chat") {
+    return (
+      <div className="min-h-screen bg-black text-white flex flex-col items-center px-4 py-6">
 
-    </main>
-  );
+        <h1 className="text-2xl mb-4">Oráculo Bíblico</h1>
+
+        <div className="w-full max-w-md h-[400px] overflow-y-auto bg-[#1a1a1a] p-4 mb-4 rounded">
+
+          {chat.map((msg, i) => (
+            <p key={i} className="mb-2">{msg.texto}</p>
+          ))}
+
+        </div>
+
+        <div className="flex gap-2 w-full max-w-md">
+          <input
+            value={mensagem}
+            onChange={(e) => setMensagem(e.target.value)}
+            className="flex-1 p-3 text-black"
+          />
+
+          <button onClick={enviarMensagem} className="bg-white text-black px-4">
+            Enviar
+          </button>
+        </div>
+
+      </div>
+    );
+  }
+
 }
