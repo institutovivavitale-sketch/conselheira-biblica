@@ -81,11 +81,12 @@ export default function Home() {
       </div>
 
       <button
-        onClick={() => router.push("/analise")}
-        className="mt-8 bg-white text-black px-6 py-3 rounded-xl font-semibold shadow-lg hover:scale-105 transition"
-      >
-        Quero uma análise individual sobre o meu relacionamento
-      </button>
+  onClick={() => router.push("/analise")}
+  className="mt-8 bg-white text-black px-6 py-3 rounded-xl font-semibold shadow-lg hover:scale-105 transition text-center leading-tight"
+>
+  <span className="block">Quero uma análise individual</span>
+  <span className="block">sobre o meu relacionamento</span>
+</button>
 
     </main>
   );
