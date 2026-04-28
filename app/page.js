@@ -84,7 +84,7 @@ export default function Home() {
         onClick={() => router.push("/analise")}
         className="mt-8 bg-white text-black px-6 py-3 rounded-xl font-semibold shadow-lg hover:scale-105 transition"
       >
-        Quero uma análise profunda do meu caso
+        Quero uma análise individual sobre o meu relacionamento
       </button>
 
     </main>
