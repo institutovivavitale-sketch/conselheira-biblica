@@ -118,11 +118,11 @@ export default function Home() {
           </p>
 
           <input
-            placeholder="Seu email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-4 rounded-xl text-black mb-4"
-          />
+  placeholder="Seu email"
+  value={email}
+  onChange={(e) => setEmail(e.target.value)}
+  className="w-full p-4 rounded-xl bg-[#0f0f0f] text-white border border-white/20 mb-4 outline-none focus:border-[#d6b56d] transition"
+/>
 
           <button
             onClick={login}
