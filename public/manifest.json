@@ -1,0 +1,17 @@
+{
+  "name": "Sua Conselheira Bíblica",
+  "short_name": "Conselheira",
+  "description": "Direção bíblica clara e prática para mulheres em restauração do casamento.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f0f0f",
+  "theme_color": "#0f0f0f",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
