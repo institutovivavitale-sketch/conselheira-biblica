@@ -7,14 +7,12 @@ export default function Home() {
 
   const [user, setUser] = useState(null);
   const [carregando, setCarregando] = useState(true);
+  const [email, setEmail] = useState("");
 
   const [etapa, setEtapa] = useState("categoria");
   const [categoriaSelecionada, setCategoriaSelecionada] = useState(null);
   const [respostas, setRespostas] = useState([]);
   const [perguntaAtual, setPerguntaAtual] = useState(0);
-
-  const [mensagem, setMensagem] = useState("");
-  const [chat, setChat] = useState([]);
 
   const emailsPermitidos = [
     "seuemail@gmail.com"
@@ -35,20 +33,20 @@ export default function Home() {
       titulo: "Brigas",
       perguntas: [
         "As brigas são frequentes?",
-        "Quem costuma iniciar?",
+        "Quem inicia?",
         "Vocês resolvem ou acumulam?",
-        "Há ofensas ou desrespeito?",
+        "Há desrespeito?",
         "Ficam dias sem se falar?"
       ]
     },
     distanciamento: {
       titulo: "Distanciamento",
       perguntas: [
-        "Ele está frio há quanto tempo?",
-        "Vocês ainda conversam normalmente?",
-        "Há carinho físico?",
-        "Vocês dormem juntos?",
-        "Você sente rejeição?"
+        "Há quanto tempo ele está distante?",
+        "Vocês ainda conversam?",
+        "Existe carinho físico?",
+        "Dormem juntos?",
+        "Você se sente rejeitada?"
       ]
     }
   };
@@ -58,84 +56,119 @@ export default function Home() {
       setUser(data.user);
       setCarregando(false);
     });
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
   }, []);
 
   const acessoLiberado = user && emailsPermitidos.includes(user.email);
 
+  const login = async () => {
+    if (!email) return alert("Digite seu email");
+
+    await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: "https://conselheira-biblica.vercel.app",
+      },
+    });
+
+    alert("Verifique seu email");
+  };
+
   const responderPergunta = async (resposta) => {
-    const novasRespostas = [...respostas, resposta];
-    setRespostas(novasRespostas);
+    const novas = [...respostas, resposta];
+    setRespostas(novas);
 
     if (perguntaAtual + 1 < categorias[categoriaSelecionada].perguntas.length) {
       setPerguntaAtual(perguntaAtual + 1);
     } else {
-      await salvarDiagnostico(novasRespostas);
-      setEtapa("chat");
-    }
-  };
-
-  const salvarDiagnostico = async (respostasFinal) => {
-    await supabase.from("diagnosticos").insert([
-      {
+      await supabase.from("diagnosticos").insert([{
         user_id: user.id,
         email: user.email,
         categoria: categoriaSelecionada,
-        respostas: respostasFinal
-      }
-    ]);
+        respostas: novas
+      }]);
+
+      setEtapa("final");
+    }
   };
 
-  const enviarMensagem = () => {
-    if (!mensagem) return;
+  // ⏳ loading
+  if (carregando) {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-black text-white">
+        Carregando...
+      </main>
+    );
+  }
 
-    const nova = { tipo: "pergunta", texto: mensagem };
-
-    const resposta = {
-      tipo: "resposta",
-      texto:
-        "Baseado no que você me contou, existe um padrão emocional acontecendo.\n\nVocê precisa parar de agir no impulso e assumir uma postura estratégica.\n\nA mulher sábia edifica a sua casa."
-    };
-
-    setChat([...chat, nova, resposta]);
-    setMensagem("");
-  };
-
-  if (carregando) return <div className="text-white">Carregando...</div>;
-
+  // 🔐 LOGIN BONITO
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black text-white">
-        <p>Faça login primeiro</p>
-      </div>
+      <main className="min-h-screen bg-black text-white flex items-center justify-center px-6">
+        <div className="w-full max-w-md bg-[#171717] rounded-3xl p-8 text-center border border-white/10">
+
+          <h1 className="text-3xl mb-4">Oráculo Bíblico</h1>
+
+          <p className="text-gray-400 mb-6">
+            Receba direção clara para o seu relacionamento
+          </p>
+
+          <input
+            placeholder="Seu email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full p-4 rounded-xl text-black mb-4"
+          />
+
+          <button
+            onClick={login}
+            className="w-full bg-white text-black py-4 rounded-xl font-semibold"
+          >
+            Receber acesso
+          </button>
+
+        </div>
+      </main>
     );
   }
 
+  // 💰 BLOQUEIO BONITO
   if (!acessoLiberado) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-black text-white text-center px-6">
-        <h1 className="text-2xl mb-4">Oráculo Bíblico</h1>
+      <main className="min-h-screen bg-black text-white flex items-center justify-center px-6 text-center">
 
-        <p className="text-gray-400 mb-6">
-          Seu acesso ainda não foi liberado.
-        </p>
+        <div className="max-w-md">
 
-        <a
-  href="https://checkout.payt.com.br/02936c4fc57ed16c8e45e392086f5b98"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="bg-white text-black px-6 py-3 rounded"
->
-  Assinar agora
-</a>
-      </div>
+          <h1 className="text-3xl mb-4">Acesso não liberado</h1>
+
+          <p className="text-gray-400 mb-6">
+            Para acessar o Oráculo Bíblico, adquira sua assinatura.
+          </p>
+
+          <a
+            href="https://checkout.payt.com.br/02936c4fc57ed16c8e45e392086f5b98"
+            target="_blank"
+            className="bg-white text-black px-6 py-4 rounded-xl font-semibold"
+          >
+            Assinar agora
+          </a>
+
+        </div>
+
+      </main>
     );
   }
 
+  // 🧠 ESCOLHA DE DOR
   if (etapa === "categoria") {
     return (
-      <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center gap-4 px-6">
+      <main className="min-h-screen bg-black text-white flex flex-col items-center justify-center gap-4 px-6">
 
-        <h1 className="text-2xl mb-4">Qual é sua maior dor hoje?</h1>
+        <h1 className="text-2xl mb-6">Qual é sua maior dor hoje?</h1>
 
         {Object.keys(categorias).map((key) => (
           <button
@@ -144,26 +177,27 @@ export default function Home() {
               setCategoriaSelecionada(key);
               setEtapa("perguntas");
             }}
-            className="bg-[#1f1f1f] px-6 py-3 rounded w-full max-w-sm"
+            className="bg-[#1f1f1f] px-6 py-4 rounded-xl w-full max-w-sm"
           >
             {categorias[key].titulo}
           </button>
         ))}
 
-      </div>
+      </main>
     );
   }
 
+  // 📋 PERGUNTAS
   if (etapa === "perguntas") {
     return (
-      <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-6 text-center">
+      <main className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-6 text-center">
 
         <h1 className="mb-6 text-xl">
           {categorias[categoriaSelecionada].perguntas[perguntaAtual]}
         </h1>
 
         <input
-          className="p-3 text-black mb-4 w-full max-w-sm"
+          className="p-4 text-black w-full max-w-sm"
           placeholder="Digite sua resposta"
           onKeyDown={(e) => {
             if (e.key === "Enter") {
@@ -173,38 +207,19 @@ export default function Home() {
           }}
         />
 
-      </div>
+      </main>
     );
   }
 
-  if (etapa === "chat") {
-    return (
-      <div className="min-h-screen bg-black text-white flex flex-col items-center px-4 py-6">
-
-        <h1 className="text-2xl mb-4">Oráculo Bíblico</h1>
-
-        <div className="w-full max-w-md h-[400px] overflow-y-auto bg-[#1a1a1a] p-4 mb-4 rounded">
-
-          {chat.map((msg, i) => (
-            <p key={i} className="mb-2">{msg.texto}</p>
-          ))}
-
-        </div>
-
-        <div className="flex gap-2 w-full max-w-md">
-          <input
-            value={mensagem}
-            onChange={(e) => setMensagem(e.target.value)}
-            className="flex-1 p-3 text-black"
-          />
-
-          <button onClick={enviarMensagem} className="bg-white text-black px-4">
-            Enviar
-          </button>
-        </div>
-
+  // 🎯 FINAL
+  return (
+    <main className="min-h-screen bg-black text-white flex items-center justify-center text-center px-6">
+      <div>
+        <h1 className="text-2xl mb-4">Diagnóstico concluído</h1>
+        <p className="text-gray-400">
+          Agora vamos te direcionar da forma correta.
+        </p>
       </div>
-    );
-  }
-
+    </main>
+  );
 }
