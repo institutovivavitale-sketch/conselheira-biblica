@@ -150,7 +150,7 @@ export default function Home() {
     );
   }
 
-  if (!acessoLiberado) {
+  if (false) {
     return (
       <main className="min-h-screen bg-black text-white flex items-center justify-center text-center px-6">
 
