@@ -120,6 +120,35 @@ export default function Home() {
     }
   };
 
+  const respostasPorCategoria = {
+    traicao:
+      "Pelo que você respondeu no diagnóstico, o que você está vivendo não é apenas dor. É uma quebra de confiança que mexe com a sua identidade como mulher, esposa e companheira.\n\nMas existe um ponto que você precisa enxergar com clareza: a forma como você reage agora pode aprofundar ainda mais essa ferida ou começar a mudar a direção da história.\n\nQuando uma mulher entra em desespero, cobrança, perseguição ou medo de perder, ela começa a perder o próprio posicionamento. E quando ela perde o posicionamento, muitas vezes o homem se afasta ainda mais.\n\nO que você precisa fazer agora:\n\n1. Pare de reagir no impulso.\n2. Recupere seu controle emocional antes de qualquer conversa importante.\n3. Observe os fatos com clareza, sem se humilhar por respostas.\n\nCuidado: tentar resolver tudo hoje, pressionar, investigar sem parar ou exigir uma definição imediata pode piorar o cenário.\n\nVocê não precisa agir rápido. Você precisa agir certo.\n\nE isso começa com postura, não com desespero.",
+
+    distanciamento:
+      "Pelo que você respondeu, o que está acontecendo não parece ser apenas frieza. Parece uma desconexão emocional que foi se formando aos poucos.\n\nE aqui muitas mulheres erram: tentam puxar proximidade através de cobrança, carência, DR constante ou insistência.\n\nMas proximidade não se força. Proximidade se constrói.\n\nQuando o homem sente pressão, ele tende a se fechar ainda mais. Por isso, sua próxima atitude precisa ser menos ansiedade e mais presença estratégica.\n\nO que você precisa entender agora:\n\n1. Você não reconecta cobrando atenção.\n2. Sua energia emocional influencia a forma como ele te percebe.\n3. Antes de tentar se aproximar dele, você precisa voltar para si.\n\nCuidado: pedir amor, pedir carinho ou tentar conversar toda hora pode aumentar a distância se ele já estiver fechado.\n\nO caminho agora não é correr atrás. É reposicionar sua presença.",
+
+    brigas:
+      "Pelo que você respondeu, o problema não parece ser apenas a briga em si, mas o padrão que se repete dentro dela.\n\nQuando um relacionamento entra em ciclo de discussão, ele deixa de ser sobre resolver e passa a ser sobre vencer. E quando os dois tentam vencer, o casamento começa a perder.\n\nVocê precisa quebrar o ciclo, não alimentar a próxima discussão.\n\nO que fazer agora:\n\n1. Pare de responder no calor da emoção.\n2. Não entre na mesma energia que sempre termina em briga.\n3. Escolha momentos certos para se posicionar, não momentos carregados.\n\nCuidado: explicar demais, se justificar demais ou tentar provar que está certa pode manter vocês presos no mesmo padrão.\n\nNem toda batalha precisa ser respondida. Algumas precisam ser interrompidas com sabedoria.",
+
+    separacao:
+      "Pelo que você respondeu, o fato dele estar fora de casa exige muita sabedoria. Isso não significa necessariamente que tudo acabou, mas também não significa que você pode agir de qualquer forma.\n\nEsse é um momento em que muitas mulheres perdem o controle emocional e, sem perceber, acabam afastando ainda mais o homem.\n\nAgora não é sobre correr atrás. É sobre reconstruir sua presença de forma estratégica.\n\nO que você precisa entender:\n\n1. Desespero fecha portas.\n2. Pressão aumenta resistência.\n3. Postura abre possibilidades.\n\nCuidado: mandar mensagem toda hora, pedir explicações, fazer cobranças ou tentar forçar uma reaproximação pode enfraquecer ainda mais sua posição.\n\nSilêncio com postura pode ser muito mais forte do que insistência com descontrole.",
+
+    terceiros:
+      "Pelo que você respondeu, existe interferência externa afetando o espaço do casal. E quando terceiros entram demais no relacionamento, geralmente o problema não é só a presença deles, mas a falta de limite dentro da relação.\n\nSe você atacar diretamente essas pessoas, existe uma grande chance dele defendê-las e se colocar contra você.\n\nPor isso, sua postura precisa ser mais inteligente do que reativa.\n\nO que fazer agora:\n\n1. Pare de disputar espaço emocional com terceiros.\n2. Fortaleça sua posição como mulher dentro da relação.\n3. Observe onde ele está permitindo interferência demais.\n\nCuidado: brigar com sogra, família, amigos ou outras pessoas pode te colocar no lugar de vilã.\n\nVocê não precisa vencer terceiros. Você precisa se posicionar melhor dentro do seu lugar.",
+
+    sexualidade:
+      "Pelo que você respondeu, a vida sexual de vocês parece carregar mais do que falta de desejo. Muitas vezes, quando a intimidade esfria, existe mágoa, distância emocional, rotina pesada ou insegurança escondida por trás.\n\nSexo dentro do casamento não é só corpo. É conexão, presença, admiração e segurança emocional.\n\nMas também é importante entender: cobrança mata o desejo. Pressão mata o clima. Ressentimento fecha o corpo.\n\nO que fazer agora:\n\n1. Observe se existe mágoa não resolvida entre vocês.\n2. Pare de tratar intimidade como prova de amor.\n3. Comece a reconstruir leveza, toque e presença sem cobrança.\n\nCuidado: transformar sexo em disputa, chantagem ou cobrança pode aumentar ainda mais a distância.\n\nA intimidade volta melhor quando o ambiente emocional começa a ficar seguro de novo.",
+
+    familia:
+      "Pelo que você respondeu, a crise não está afetando apenas o casal. Ela também toca a estrutura da família e, possivelmente, os filhos.\n\nQuando a mulher sente que carrega tudo sozinha, ela pode começar a funcionar no modo sobrevivência: resolve tudo, segura tudo, sente tudo e ainda tenta salvar o casamento.\n\nMas uma casa não se edifica apenas com esforço. Ela precisa de ordem, presença e direção.\n\nO que fazer agora:\n\n1. Pare de carregar sozinha o que deveria ser responsabilidade compartilhada.\n2. Observe onde você virou mãe do relacionamento, e não esposa.\n3. Proteja emocionalmente seus filhos sem transformar eles em confidentes da dor do casal.\n\nCuidado: envolver filhos, desabafar com eles ou usar a família como campo de guerra pode gerar marcas profundas.\n\nSeu lar precisa de paz, mas essa paz começa com posicionamento.",
+
+    financeiro:
+      "Pelo que você respondeu, a vida financeira está mexendo com a segurança do relacionamento. E dinheiro, dentro do casamento, raramente é só dinheiro. Ele revela responsabilidade, parceria, medo, controle e sobrecarga.\n\nQuando não existe clareza financeira, a mulher pode se sentir desamparada, sobrecarregada ou até sozinha dentro da própria casa.\n\nO que fazer agora:\n\n1. Pare de discutir dinheiro apenas no momento da crise.\n2. Busque clareza antes de cobrança.\n3. Observe se existe desorganização, omissão ou falta de responsabilidade.\n\nCuidado: brigar por dinheiro sem uma conversa estruturada pode transformar o problema financeiro em guerra emocional.\n\nO primeiro passo não é acusar. É organizar a realidade e se posicionar com firmeza.",
+
+    lar:
+      "Pelo que você respondeu, parece que o peso da rotina e dos cuidados do lar está consumindo sua leveza.\n\nMuitas mulheres entram em um ciclo silencioso: cuidam da casa, dos filhos, da rotina, do marido, dos problemas… e quando percebem, deixaram de cuidar de si.\n\nMas uma mulher esgotada não consegue edificar com alegria. Ela apenas sobrevive dentro da própria casa.\n\nO que fazer agora:\n\n1. Observe onde você está carregando mais do que deveria.\n2. Pare de se abandonar em nome de manter tudo funcionando.\n3. Reorganize sua rotina com espaço para você também existir.\n\nCuidado: fazer tudo sozinha e depois explodir de mágoa cria um ciclo de ressentimento.\n\nCuidar do lar é importante. Mas você também faz parte desse lar."
+  };
+
   const login = () => {
     if (!email.trim()) return alert("Digite seu email");
 
@@ -166,8 +195,7 @@ export default function Home() {
 
     const resposta = {
       tipo: "resposta",
-      texto:
-        "Com base no que você compartilhou no diagnóstico, existe um ponto importante: sua próxima atitude precisa sair da reação e entrar na sabedoria.\n\nO que a Bíblia mostra: a mulher sábia edifica a sua casa, mas ela não edifica no desespero, na cobrança ou na humilhação.\n\nO que fazer agora:\n1. Pare de agir no impulso\n2. Observe o padrão que está se repetindo\n3. Escolha uma postura mais firme, calma e estratégica\n\nCuidado: tentar resolver tudo hoje pode te fazer perder ainda mais força.\n\nFaça isso hoje: não cobre resposta. Recolha sua ansiedade e observe.",
+      texto: respostasPorCategoria[categoriaSelecionada],
     };
 
     setChat([...chat, pergunta, resposta]);
